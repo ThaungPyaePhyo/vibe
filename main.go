@@ -1,29 +1,22 @@
 package main
 
 import (
+	"context"
+	"os"
+
 	"github.com/gin-gonic/gin"
 	"github.com/thaungpyaephyo/studentvibe/config"
+	"github.com/thaungpyaephyo/studentvibe/handlers"
+	"github.com/thaungpyaephyo/studentvibe/routes"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 func main() {
     config.ConnectDB()
     router := gin.Default()
-
-    // API routes
-    api := router.Group("/api")
-    {
-        api.GET("/hello", func(c *gin.Context) {
-            c.String(200, "Hello, World!")
-        })
-    }
-
-    // Serve static files under /static
-    router.Static("/static", "./frontend/dist")
-
-    // SPA fallback: serve index.html for all other routes
-    router.NoRoute(func(c *gin.Context) {
-        c.File("./frontend/dist/index.html")
-    })
-
-    router.Run(":8080")
+    routes.RegisterRoutes(router)
+	client, _ := mongo.Connect(context.TODO(), options.Client().ApplyURI(os.Getenv("MONGODB_URI")))
+    handlers.UserCollection = client.Database("student_vibe").Collection("users")
+    router.Run(":8000")
 }
