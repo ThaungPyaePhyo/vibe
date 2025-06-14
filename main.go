@@ -39,6 +39,7 @@ func main() {
 
 	client, _ := mongo.Connect(context.TODO(), options.Client().ApplyURI(os.Getenv("MONGODB_URI")))
 	handlers.UserCollection = client.Database("student_vibe").Collection("users")
+	handlers.PostCollection = client.Database("student_vibe").Collection("posts") 
 
 	router.Run(":8000")
 }

@@ -12,6 +12,8 @@ func RegisterRoutes(router *gin.Engine) {
 		api.POST("/register", handlers.CreateUser)
 		api.POST("/login", handlers.LoginUser)
 		api.POST("/logout", middleware.Auth() ,handlers.LogoutUser)
+		api.GET("/posts", middleware.Auth(), handlers.GetPosts)
+		api.POST("/posts", middleware.Auth(), handlers.CreatePost)
 	}
 
 	router.Static("/static", "./frontend/dist")
