@@ -93,7 +93,7 @@ func LoginUser(c *gin.Context) {
 	}
 	session.Set("xsrf_token", csrfToken)
 	session.Save()
-	c.SetCookie("XSRF-TOKEN", csrfToken, 3600, "/", "", false, true)
+	c.SetCookie("XSRF-TOKEN", csrfToken, 3600, "/", "", false, false)
 
 	c.JSON(http.StatusOK, gin.H{"message": "Login successful", "user": user})
 }
@@ -105,4 +105,12 @@ func generateCSRFToken() (string, error) {
 		return "", err 
 	}
 	return base64.StdEncoding.EncodeToString(b), nil
+}
+
+func LogoutUser(c *gin.Context) {
+	session := sessions.Default(c)
+	session.Clear()
+	session.Save()
+	c.SetCookie("XSRF-TOKEN", "", -1, "/", "", false, true)
+	c.JSON(http.StatusOK, gin.H{"message": "Logout successful"})
 }
