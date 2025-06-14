@@ -18,6 +18,7 @@ func RegisterRoutes(router *gin.Engine) {
 		api.DELETE("/posts/:id", middleware.Auth(), handlers.DeletePost)
 		api.GET("/posts/user", middleware.Auth(), handlers.GetPostsByUser)
 		api.GET("/posts/:id", middleware.Auth(), handlers.GetPostByID)
+		api.POST("/posts/:id/like", middleware.Auth(), handlers.LikePost)
 	}
 
 	router.Static("/static", "./frontend/dist")
