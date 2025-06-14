@@ -79,13 +79,39 @@ func UpdatePost(c *gin.Context) {
 		return
 	}
 
+	session := sessions.Default(c)
+	userID := session.Get("user_id")
+	userIDStr, ok := userID.(string)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user_id in session"})
+		return
+	}
+	
+	userObjID, err := primitive.ObjectIDFromHex(userIDStr) 
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid user_id format"})
+		return
+	}
+
 	post.UpdatedAt = time.Now().Format(time.RFC3339)
 	filter := bson.M{"_id": objID}
-	update := bson.M{"$set": post}
+	post.ID = primitive.NilObjectID 
+	update := bson.M{
+		"$set": bson.M{
+			"user_id":   userObjID,
+			"title":     post.Title,
+			"content":   post.Content,
+			"updated_at": post.UpdatedAt,
+		},
+	}
 
 	result, err := PostCollection.UpdateOne(context.TODO(), filter, update)
-	if err != nil || result.MatchedCount == 0 {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update post"})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+	if result.MatchedCount == 0 {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Post not found"})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"message": "Post updated successfully"})
