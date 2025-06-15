@@ -19,6 +19,7 @@ func RegisterRoutes(router *gin.Engine) {
 		api.GET("/posts/user", middleware.Auth(), handlers.GetPostsByUser)
 		api.GET("/posts/:id", middleware.Auth(), handlers.GetPostByID)
 		api.POST("/posts/:id/like", middleware.Auth(), handlers.LikePost)
+		api.POST("/posts/:id/comments", middleware.Auth(), handlers.CommentPost)
 	}
 
 	router.Static("/static", "./frontend/dist")

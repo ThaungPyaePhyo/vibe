@@ -41,6 +41,7 @@ func main() {
 	handlers.UserCollection = client.Database("student_vibe").Collection("users")
 	handlers.PostCollection = client.Database("student_vibe").Collection("posts") 
 	handlers.LikeCollection = client.Database("student_vibe").Collection("likes") 
+	handlers.CommentCollection = client.Database("student_vibe").Collection("comments")
 
 	router.Run(":8000")
 }
